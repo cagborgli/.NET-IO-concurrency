@@ -25,27 +25,30 @@ namespace Server
 
                 // Await connection from client
                 Console.WriteLine("Awaiting connection...");
-                var client = listener.AcceptTcpClient();
-                
-                Console.WriteLine("Received connection.");
-                using (NetworkStream stream = client.GetStream())
+                while (true)
                 {
-                    // Deserialize QuoteRequest
-                    var request = (QuoteRequest) requestSerializer.Deserialize(stream);
-                    
-                    // Fetch quotes from stock API
-                    Console.WriteLine("Fetching quotes");
-                    var quotes = await Stocks.Api.FetchQuotes(request);
-                    
-                    // Convert response into formatted string
-                    var quoteString = new QuoteResponse
-                    {
-                        QuoteString = Stocks.Utils.QuotesToString(quotes, request.Fields)
-                    };
+                    var client = listener.AcceptTcpClient();
 
-                    // Serialize response back to client
-                    Console.WriteLine("Sending quote");
-                    responseSerializer.Serialize(stream, quoteString);
+                    Console.WriteLine("Received connection.");
+                    using (NetworkStream stream = client.GetStream())
+                    {
+                        // Deserialize QuoteRequest
+                        var request = (QuoteRequest)requestSerializer.Deserialize(stream);
+
+                        // Fetch quotes from stock API
+                        Console.WriteLine("Fetching quotes");
+                        var quotes = await Stocks.Api.FetchQuotes(request);
+
+                        // Convert response into formatted string
+                        var quoteString = new QuoteResponse
+                        {
+                            QuoteString = Stocks.Utils.QuotesToString(quotes, request.Fields)
+                        };
+
+                        // Serialize response back to client
+                        Console.WriteLine("Sending quote");
+                        responseSerializer.Serialize(stream, quoteString);
+                    }
                 }
             }
             catch (Exception e)

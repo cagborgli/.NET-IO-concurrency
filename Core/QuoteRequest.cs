@@ -8,5 +8,6 @@ namespace Core
     {
         public List<QuoteField> Fields { get; set; }
         public List<string> Symbols { get; set; }
+        public int Interval { get; set; }
     }
 }
