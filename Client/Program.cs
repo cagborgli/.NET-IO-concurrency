@@ -26,14 +26,13 @@ namespace Client
             {
                 Fields = new List<QuoteField> { QuoteField.High, QuoteField.Low, QuoteField.Close },
                 Symbols = new List<string> { "AAPL", "TSLA", "TWTR", "SNAP", "GOOGL", "AMZN" },
-                Interval = 5
+                Interval = 10000
             };
             
             try
             {
                 while (true)
                 {
-
                     // Initialize connection to server
                     var client = new TcpClient(address, port);
 
@@ -48,11 +47,8 @@ namespace Client
                         // Receive QuoteResponse from server
                         QuoteResponse response = (QuoteResponse)responseSerializer.Deserialize(stream);
 
-                        //String to txt file 
-                        System.IO.File.WriteAllText(@"C:\Users\ftd-09\Desktop\Assignments\Test.txt", response.QuoteString);
-                        //requestSerializer.Serialize(filename, response);
+                        stream.CopyTo(Console.OpenStandardOutput());
 
-                        Console.WriteLine(response.QuoteString);
                     }
                  
                 }
